@@ -1,30 +1,102 @@
-<!DOCTYPE html>
-
-<html>
-
-   <head>
-      <title>Clementine.js - The elegant and lightweight full-stack boilerplate.</title>
-      <link href="http://fonts.googleapis.com/css?family=Roboto:400,500" rel="stylesheet" type="text/css">
-      <link href="/public/css/main.css" rel="stylesheet" type="text/css">  
-   </head>
-
-   <body>
-      <div class="container">
-         <img src="/public/img/clementine_150.png" />
-         <br />
-         <p class="clementine-text">Clementine.js</p>
+<!doctype html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <base href="/">
+    <title>Upload file micro service</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>
+      <style>
+      .fcc-brand > img {
+          display: block;
+          margin-bottom: 40px;
+      }
+      .nav-logo {
+        width: 400;
+      }
+      .formitems {
+      	margin: 10px;
+      	border: 1px solid #bbb;
+      	padding: 10px;
+      	max-width: 400px;
+      }
+      #result {
+      	margin: 40px 10px 10px 10px;
+      	max-width: 400px;
+      	border: 1px solid #bbb;
+      	padding: 10px;
+      	background: #eee;
+      	font-family: Ludica, Monospace, sans-serif;
+      	font-size: 11px;
+      }
+      pre {
+      	padding: 0;
+      	background-color: inherit;
+      	border: none;
+      	color: darkred;
+      }
+      </style>
+  </head>
+  <body>
+<div class="container">
+    <a href="http://www.freecodecamp.com/roelver" class="fcc-brand">
+      <img alt="Freecodecamp.com logo" src="/public/img/fcclogo.png" class="nav-logo"/>
+    </a>
+    <h1 class="header">File upload Microservice</h1>
+    <p>By Roel Verbunt |
+        <a href="https://github.com/roelver/upload-micro">Project GitHub</a></p>
+    <blockquote>User Stories:
+        <ol>
+            <li>I can submit a FormData object that includes a file upload.</li>
+            <li>When I submit something, I will receive the file size in bytes within the JSON response</li>
+        </ol>
+    </blockquote>
+    <p><hr/></p>
+    <h2>Upload your file here</h2>
+    <form id="frm" method="POST" action="/upload">
+      <div class="formitems">
+      <div class="form-group">
+        <label for="fupload">File</label>
+        <input type="file" name="fupload" id="fupload"/>
       </div>
-
-      <div class="container">
-         <p>You have clicked the button <span id="click-nbr"></span> times.</p>   
-         <br />
-         <div class="btn-container">
-            <button type="submit" class="btn btn-add">CLICK ME!</button>
-            <button class="btn btn-delete">RESET</button>
-         </div>
+      <button type="submit" class="btn btn-info btn-submit">Submit</button>
       </div>
+    </form> 
+    <div id="result"><pre>{ 
+}</pre>
+    </div>
+</div>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+  <script>
+  		$(function() {
+  				$("#frm").on('submit', function(event) {
+  					event.preventDefault();
+  					var input = $('#fupload')[0];
+  					var formData = new FormData();
+               formData.append('fupload', input.files[0]);
 
-      <script type="text/javascript" src="/controllers/clickController.client.js"></script>   
-   </body>
-
+					$.ajax({
+       				url : '/upload',
+       				type : 'POST',
+       				data : formData,
+       				processData: false,  // tell jQuery not to process the data
+       				contentType: false,  // tell jQuery not to set contentType
+       				success : function(data) {
+           				$('#result').html('<pre>'+JSON.stringify(data,null,2)+'</pre>');
+       				},
+       				error: function(data) {
+           				$('#result').html('<pre>ERROR: '+data.responseText+'</pre>');
+           			}
+					});
+  				});
+  			}
+  		);
+  </script>
+  </body>
 </html>
